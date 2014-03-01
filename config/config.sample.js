@@ -4,6 +4,6 @@ module.exports = {
 	},
 
 	production : {
-		db: 'mongodb://spoolphiz:testingstuff@ds033499.mongolab.com:33499/favlocations',
+		db: 'mongodb://<username:<password>@<hostname>:<port>/favlocations',
 	}
 };

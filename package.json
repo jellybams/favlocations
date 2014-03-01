@@ -1,0 +1,17 @@
+{
+  "name": "favlocations",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "*",
+    "ejs": "*",
+    "passport": "*",
+    "passport-local": "*",
+    "mongoose": "*",
+    "geocoder": "*",
+    "util": "*"
+  }
+}

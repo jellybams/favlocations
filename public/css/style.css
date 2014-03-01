@@ -1,0 +1,47 @@
+body {
+  padding-top: 60px;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+.navbar-brand {
+  line-height:12px;
+  padding-top:20px;
+  padding-bottom:5px;
+}
+
+.navbar-brand small {
+  display:block;
+  font-size:10px;
+}
+
+.bg-primary {
+	padding:10px;
+}
+
+#locations-table small {
+	display:block;
+}
+
+#locations-table tbody td.location-item {
+	cursor: pointer;
+}
+
+#location-form div.row {
+	padding-bottom: 10px;
+}
+
+.map {
+	margin-top:20px;
+}
+
+.angular-google-map-container { 
+	height: 400px; 
+	margin-top:30px;
+}
+
+@media (min-width: 768px) {
+
+}

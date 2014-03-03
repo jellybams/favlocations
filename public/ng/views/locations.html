@@ -6,7 +6,7 @@
 					<h1>Manage your locations</h1>
 				</div>
 				<div class="col-xs-2">
-					<button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add One</button>
+					<button ng-click="new()" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add One</button>
 				</div>
 			</div>
 			
@@ -14,8 +14,8 @@
 			<table class="table" id="locations-table">
 				<thead>
 					<tr>
-						<th>Name</th>
-						<th>Actions</th>
+						<th class="col-md-9">Name</th>
+						<th class="col-md-3">Actions</th>
 					</tr>
 				</thead>
 				<tbody>

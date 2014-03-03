@@ -113,6 +113,11 @@ app.post('/api/v1/locations', function(req, res){
   var newLocation = req.body;
 
   User.findById(req.user._id, function(err, user){
+
+  	console.log('req.body:');
+  	console.log(newLocation);
+  	console.log();
+
     user.locations.push(newLocation);
 
     console.log(user);
@@ -133,16 +138,16 @@ app.post('/api/v1/locations', function(req, res){
 
 app.delete('/api/v1/locations/:locId', auth, function(req, res){
 
-	var self = this;
+	var locId = req.params.locId;
 	User.findOneAndUpdate(
     	{_id: req.user._id}, 
-    	{$pull: {locations: {_id: req.params.locId}}},
+    	{$pull: {locations: {_id: locId}}},
     	function(err, user) {
     		if(err){
     			res.send({message: err.message}, 400);
     		}
     		else{
-    			res.send({locId: self.req.params.locId}, 200);
+    			res.send({locId: locId}, 200);
     		}
     	});
 });
@@ -159,7 +164,7 @@ app.get('/api/v1/locations/:locId', auth, function(req, res){
           res.send(err, 400); 
         }
         else{
-          if( data[0].locations[0] ) {
+          if( data[0] && data[0].locations[0] ) {
            res.send(data[0].locations[0]);  
           }
           else{

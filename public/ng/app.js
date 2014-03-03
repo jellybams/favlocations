@@ -109,18 +109,31 @@ favlocations.module.controller('LocationListCtrl',
 		$location.path('locations/' + locId);
 	};
 
+	$scope.new = function(){
+		$location.path('locations/0');
+	}
+
 	$scope.remove = function(locId){
-		FavLocation.remove(locId, function(data){
-			//success
-			var index = favlocations.util.findInList($scope.locations, data.locId, true, '_id');
-			$scope.registered.splice(index, 1);
-			$rootScope.message = 'Location has been deleted.';
-		},
-		function(err){
-			//error
-			console.log(err);
-		});
+
+		if( window.confirm('Are you sure you want to delete this location?') ){
+			FavLocation.remove(locId, function(data){
+				
+
+				console.log(data);
+				console.log($scope.locations);
+
+
+				var index = favlocations.util.findInList($scope.locations, data.locId, true, '_id');
+				$scope.locations.splice(index, 1);
+				$rootScope.message = 'Location has been deleted.';
+			},
+			function(err){
+				//error
+				console.log(err);
+			});
+		}
 	};
+
 
 	$scope.load();
 }]);
@@ -132,36 +145,38 @@ favlocations.module.controller('LocationListCtrl',
 
 
 
-favlocations.module.controller('LocationCtrl', ['$scope', '$routeParams', 'FavLocation', function($scope, $routeParams, FavLocation){
+favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeParams', 'FavLocation', '$location',
+												function($scope, $rootScope, $routeParams, FavLocation, $location){
 	$scope.load = function(){
 
 		$scope.locationId = $routeParams.locationId;
 		$scope.favlocation = {};
+		$scope.map = {};
 
 		if( $routeParams.locationId != 0 ){
 			//get the current location record
 			FavLocation.get($routeParams.locationId, function(data){
 				//success
 				$scope.favlocation = data;
+
+				//google map params
+				$scope.map = {
+						    center: {
+						        latitude: data.lat,
+						        longitude: data.lng
+						    },
+						    zoom: 8,
+						    draggable: 'false',
+						    marker: {
+						    	coords: {latitude: data.lat, longitude: data.lng},
+						    	iconuri: 'http://localhost:3000/img/redpin-sm.png'
+						    }
+						};
 			},
 			function(err){
 				//error - redirect back to location list and show error message
 				//console.log(err);
 			});
-
-			//google map params
-			$scope.map = {
-					    center: {
-					        latitude: 45,
-					        longitude: -73
-					    },
-					    zoom: 8,
-					    draggable: 'false',
-					    marker: {
-					    	coords: {latitude: 45, longitude: -73},
-					    	iconuri: 'http://localhost:3000/img/redpin-sm.png'
-					    }
-					};
 		}
 		
 	};
@@ -171,15 +186,38 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$routeParams', 'FavLo
 		//	return;
 		//}
 
-		FavLocation.save($scope.favlocation, function(data){
-			//success
-			console.log(data);
+		console.log('original: ');
+		console.log($scope.favlocation);
+
+
+		var locationTransformed = FavLocation.prepareParams($scope.favlocation);
+		
+		console.log('transformed: ');
+		console.log(locationTransformed);
+		
+
+		FavLocation.save(locationTransformed, function(data){
+			$rootScope.message = 'Location saved.'
+			$location.path('locations');
 		},
 		function(err){
 			//error
-			console.log(err);
+			$rootScope.message = 'There was an error saving this location.';
 		});
+		
 	};
+
+	$scope.remove = function(){
+		if( window.confirm('Are you sure you want to delete this location?') ){
+			FavLocation.remove($scope.favlocation._id, function(data){
+				$rootScope.message = 'Location deleted.';
+				$location.path('locations');
+			},
+			function(err){
+				$rootScope.message = 'Oops: '+err.message;
+			});
+		}
+	}
 
 	$scope.load();
 }]);
@@ -222,6 +260,14 @@ favlocations.module.factory('FavLocation', function($http){
 	FavLocation.remove = function(id, success, error){
 		$http.delete(FavLocation.url + id).success(success).error(error);
 	};
+
+	FavLocation.prepareParams = function(locationFields){
+		var transformed = {};
+		transformed.address = locationFields.address + ', ' + locationFields.city + ', ' + locationFields.state + ', ' + locationFields.zip + ' ' + locationFields.country;
+		transformed.name = locationFields.name;
+
+		return transformed;
+	}
 
 	return FavLocation;
 });
@@ -295,6 +341,7 @@ favlocations.util.findInList = function(list, val, idx, key) {
 
 	key = key ? key : 'id';
 	for (var i = 0; i < list.length; i++) {
+		console.log(list[i][key]);
 		if (list[i][key] == val) {
 			return idx ? i : list[i];	
 		}
@@ -302,3 +349,4 @@ favlocations.util.findInList = function(list, val, idx, key) {
 
 	return idx ? false : null;
 };
+

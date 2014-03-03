@@ -23,8 +23,6 @@ LocationSchema.virtual('id')
 
 //geocode address before saving location
 LocationSchema.pre('save', function(next) {
-  //concatenate all the address field into one string
-
   //geocode address
   var location = this;
   geocoder.geocode(this.address, function ( err, data ) {

@@ -20,10 +20,10 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="loc in locations">
-						<td ng-click="editLocation(loc.id)" class="location-item">{{loc.name}}<small>{{loc.address}}</small></td>
+						<td ng-click="edit(loc._id)" class="location-item">{{loc.name}}<small>{{loc.address}}</small></td>
 						<td>
-							<button class="btn btn-warning" ng-click="editLocation(loc.id)"><span class="glyphicon glyphicon-pencil"></span></button>
-							<button class="btn btn-danger" ng-click="removeLocation(loc.id)"><span class="glyphicon glyphicon-trash"></span></button>
+							<button class="btn btn-warning" ng-click="edit(loc._id)"><span class="glyphicon glyphicon-pencil"></span></button>
+							<button class="btn btn-danger" ng-click="remove(loc._id)"><span class="glyphicon glyphicon-trash"></span></button>
 						</td>
 					</tr>
 				</tbody>

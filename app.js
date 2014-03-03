@@ -4,9 +4,10 @@ var express = require('express'),
   mongoose = require('mongoose'),
   passport = require('passport'),
   LocalStrategy = require('passport-local').Strategy,
-  UserSchema = require('./models/user');
-  LocationSchema = require('./models/location')
-  var util = require('util');
+  UserSchema = require('./models/user'),
+  LocationSchema = require('./models/location'),
+  util = require('util'),
+  ObjectId = require('mongoose').Types.ObjectId;
 
 
 // Load configurations
@@ -24,7 +25,9 @@ Location = mongoose.model('Location', LocationSchema);
 // Define the strategy to be used by PassportJS
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    User.findOne({'username': username}, function(err, user){
+    //User.find()
+
+    User.findOne({'username': username}, { 'locations': 0 }, function(err, user){
       if(err){
         return done(null, false, { message: 'Incorrect credentials.' });
       }
@@ -35,6 +38,7 @@ passport.use(new LocalStrategy(
 
       return done(null, user);
     });
+    
   }
 ));
 
@@ -70,16 +74,26 @@ var app = express();
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-app.use(express.favicon());
+
+app.use(function(req, res, next) {
+  //send all api responses as json
+  regex = new RegExp('/^/api\//i');
+  if( regex.test(req.url) ){
+    res.contentType('application/json'); 
+  }
+  console.log(regex.test(req.url));
+  
+  next();
+});
 app.use(express.logger('dev'));
 app.use(express.cookieParser()); 
-app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.session({ secret: 'securedsession' }));
-app.use(passport.initialize()); // Add passport initialization
-app.use(passport.session());    // Add passport initialization
-app.use(app.router);
+app.use(express.json()); 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(app.router);
 
 // development only
 if ('development' == app.get('env')) {
@@ -89,32 +103,83 @@ if ('development' == app.get('env')) {
 
 // routes
 app.get('/', function(req, res){
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'Favorite Locations' });
 });
 
-app.get('/api/v1/locations', auth, function(req, res){
-  User.find({'locations.name': '*'}, function(err, data){
-    if( err ){ console.log(util.inspect(err, false, null));}
 
-    console.log(util.inspect(data, false, null)); 
 
-    res.send(data);
-  }); 
+
+app.post('/api/v1/locations', function(req, res){
+  var newLocation = req.body;
+
+  User.findById(req.user._id, function(err, user){
+    user.locations.push(newLocation);
+
+    console.log(user);
+
+    user.save(function(err, user){
+      if(err){
+        res.send({message: 'Unable to save new location.'}, 500);
+      }
+      else{
+      	res.send(200);
+      }
+
+      
+    });
+  });
 });
+
+
+app.delete('/api/v1/locations/:locId', auth, function(req, res){
+
+	var self = this;
+	User.findOneAndUpdate(
+    	{_id: req.user._id}, 
+    	{$pull: {locations: {_id: req.params.locId}}},
+    	function(err, user) {
+    		if(err){
+    			res.send({message: err.message}, 400);
+    		}
+    		else{
+    			res.send({locId: self.req.params.locId}, 200);
+    		}
+    	});
+});
+
+
 
 app.get('/api/v1/locations/:locId', auth, function(req, res){
-  User.find({'locations.name': '*'}, function(err, data){
-    if( err ){ console.log(util.inspect(err, false, null));}
 
-    console.log(util.inspect(data, false, null)); 
-
-    res.send(data);
-  }); 
+    User.find()
+    .where('locations._id', req.params.locId)
+    .select({'locations.$': 1})
+    .exec(function(err, data){
+        if(err){ 
+          res.send(err, 400); 
+        }
+        else{
+          if( data[0].locations[0] ) {
+           res.send(data[0].locations[0]);  
+          }
+          else{
+            res.send({});
+          }
+        }
+    });
 });
 
 
-app.get('/users', function(req, res){
-  res.send([{name: "user1"}, {name: "user2"}]);
+
+app.get('/api/v1/users/:userId', function(req, res){
+  User.findOne({'_id': req.params.userId}, function(err, user){
+    if(err){
+      res.send(err, 400);
+    }
+    else{
+      res.send(user);
+    }
+  });
 });
 
 
@@ -137,6 +202,13 @@ app.get('/logout', function(req, res){
   'Location': '/'
   });
   res.end();
+});
+
+
+app.get('/users', function(req, res){
+	User.find(function(err, users){
+		res.send(users);
+	});
 });
 
 

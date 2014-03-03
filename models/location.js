@@ -23,13 +23,13 @@ LocationSchema.virtual('id')
 
 //geocode address before saving location
 LocationSchema.pre('save', function(next) {
-  var location = this;
+  //concatenate all the address field into one string
 
+  //geocode address
+  var location = this;
   geocoder.geocode(this.address, function ( err, data ) {
     if(data && data.status == 'OK'){
       //console.log(util.inspect(data.results[0].geometry.location.lng, false, null));
-
-      //TODO: before saving make sure this location does not already exist by checking lat/lng
 
       location.lat = data.results[0].geometry.location.lat;
       location.lng = data.results[0].geometry.location.lng;

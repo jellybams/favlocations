@@ -1,8 +1,9 @@
 var UserSchema,
     crypto = require('crypto'),
     mongoose = require('mongoose'),
-    Schema = mongoose.Schema
-    LocationSchema = require('./location');
+    Schema = mongoose.Schema,
+    LocationSchema = require('./location'),
+    util = require('util');
 
 /**
 * Model: User
@@ -41,7 +42,7 @@ UserSchema.method('encryptPassword', function(password) {
 });
 
 UserSchema.pre('save', function(next) {
-  if (!validatePresenceOf(this.password)) {
+  if ( !this._id && !validatePresenceOf(this.password)) {
     next(new Error('Invalid password'));
   } else {
     next();

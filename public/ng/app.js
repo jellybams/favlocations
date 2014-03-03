@@ -50,9 +50,16 @@ favlocations.module = angular.module('favlocations', ['ngRoute', 'ngResource', '
 		$routeProvider
 			.when('/login', {controller: 'LoginCtrl', templateUrl: 'ng/views/login.html'})
 			.when('/locations', {controller: 'LocationListCtrl', templateUrl: 'ng/views/locations.html', resolve: {loggedin: checkLoggedin}})
-			.when('/locations/:locationId', {controller: 'LocationCtrl', templateUrl: 'ng/views/editlocation.html'})
+			.when('/locations/:locationId', {controller: 'LocationCtrl', templateUrl: 'ng/views/editlocation.html', resolve: {loggedin: checkLoggedin}})
 			.otherwise({redirectTo: '/locations'});
 	});
+
+
+
+
+
+
+
 
 favlocations.module.controller('LoginCtrl', function($scope, $rootScope, $http, $location){
 	$scope.user = {};
@@ -75,24 +82,96 @@ favlocations.module.controller('LoginCtrl', function($scope, $rootScope, $http, 
 });
 
 
-favlocations.module.controller('LocationListCtrl', ['$scope', '$rootScope', '$location', 'User', function($scope, $rootScope, $location, User) {
+
+
+
+
+
+favlocations.module.controller('LocationListCtrl', 
+							['$scope', '$rootScope', '$location', '$timeout', 'User', 'FavLocation',
+							function($scope, $rootScope, $location, $timeout, User, FavLocation) {
+
 	$scope.load = function(){
+		if( $rootScope.message ){
+			$timeout(function(){
+				$rootScope.message = null;
+			}, 4000)
+		}
+
 		$scope.locations = {};
-		$scope.locations = $rootScope.user.locations;
+		User.get($rootScope.user._id, function(data){
+			$scope.locations = data.locations;
+		});
+		
 	};
 
-	$scope.editLocation = function(locId){
+	$scope.edit = function(locId){
 		$location.path('locations/' + locId);
+	};
+
+	$scope.remove = function(locId){
+		FavLocation.remove(locId, function(data){
+			//success
+			var index = favlocations.util.findInList($scope.locations, data.locId, true, '_id');
+			$scope.registered.splice(index, 1);
+			$rootScope.message = 'Location has been deleted.';
+		},
+		function(err){
+			//error
+			console.log(err);
+		});
 	};
 
 	$scope.load();
 }]);
 
 
+
+
+
+
+
+
 favlocations.module.controller('LocationCtrl', ['$scope', '$routeParams', 'FavLocation', function($scope, $routeParams, FavLocation){
 	$scope.load = function(){
-		//get the current location record
-		FavLocation.get($routeParams.locationId, function(data){
+
+		$scope.locationId = $routeParams.locationId;
+		$scope.favlocation = {};
+
+		if( $routeParams.locationId != 0 ){
+			//get the current location record
+			FavLocation.get($routeParams.locationId, function(data){
+				//success
+				$scope.favlocation = data;
+			},
+			function(err){
+				//error - redirect back to location list and show error message
+				//console.log(err);
+			});
+
+			//google map params
+			$scope.map = {
+					    center: {
+					        latitude: 45,
+					        longitude: -73
+					    },
+					    zoom: 8,
+					    draggable: 'false',
+					    marker: {
+					    	coords: {latitude: 45, longitude: -73},
+					    	iconuri: 'http://localhost:3000/img/redpin-sm.png'
+					    }
+					};
+		}
+		
+	};
+
+	$scope.save = function(){
+		//if (!$scope.validate()) {
+		//	return;
+		//}
+
+		FavLocation.save($scope.favlocation, function(data){
 			//success
 			console.log(data);
 		},
@@ -100,35 +179,48 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$routeParams', 'FavLo
 			//error
 			console.log(err);
 		});
-
-		//google map params
-		$scope.map = {
-				    center: {
-				        latitude: 45,
-				        longitude: -73
-				    },
-				    zoom: 8,
-				    draggable: 'false',
-				    marker: {
-				    	coords: {latitude: 45, longitude: -73},
-				    	iconuri: 'http://localhost:3000/img/redpin-sm.png'
-				    }
-				};
-	}
+	};
 
 	$scope.load();
 }]);
 
 
 
+
+
+
+
+
+
+
+
+
+
 favlocations.module.factory('FavLocation', function($http){
 	var FavLocation = {};
 
-	FavLocation.baseUrl = favlocations.apiUrl + 'locations/';
+	FavLocation.url = favlocations.apiUrl + 'locations/';
 
 	FavLocation.get = function(id, success, error){
-		var url = this.baseUrl + id;
+		var url = this.url + id;
+		console.log(url);
 		$http.get(url).success(success).error(error);
+	};
+
+	FavLocation.save = function(location, success, error){
+
+		//var filtered = favlocations.util.mergeInto(FavLocation.create(), location);
+
+		if( location._id ){
+			$http.put( this.url + id, location ).sucess(success).error(error);
+		}
+		else{
+			$http.post( this.url, location ).success(success).error(error);
+		}
+	};
+
+	FavLocation.remove = function(id, success, error){
+		$http.delete(FavLocation.url + id).success(success).error(error);
 	};
 
 	return FavLocation;
@@ -154,3 +246,59 @@ favlocations.module.factory('User', function($http){
 
 	return User;
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+favlocations.util = {};
+
+/**
+ * Overwrite dest object with values from src object
+ *
+ * @param   object   dest   Destination object. Only keys that exist will be updated (i.e. no new keys will be merged)
+ * @param   object   src    Source object
+ *
+ * @return  object
+ */
+favlocations.util.mergeInto = function(dest, src){
+	for (var i in dest) {
+		if (dest.hasOwnProperty(i) && typeof src[i] != 'undefined') {
+			dest[i] = src[i];
+		}
+	}
+
+	return dest;
+}
+
+
+/**
+ * Find item by key in a list
+ *
+ * @param   array    list   List of items
+ * @param   mixed    id     Value to find
+ * @param   bool     idx    True to return index in list, else return object
+ * @param   string   key    Key name (defaults to 'id')
+ *
+ * @return  mixed
+ */
+favlocations.util.findInList = function(list, val, idx, key) {
+
+	key = key ? key : 'id';
+	for (var i = 0; i < list.length; i++) {
+		if (list[i][key] == val) {
+			return idx ? i : list[i];	
+		}
+	}
+
+	return idx ? false : null;
+};

@@ -1,33 +1,29 @@
 var express = require('express'),
-  http = require('http'),
-  path = require('path'),
-  mongoose = require('mongoose'),
-  passport = require('passport'),
-  LocalStrategy = require('passport-local').Strategy,
-  UserSchema = require('./models/user'),
-  LocationSchema = require('./models/location'),
-  util = require('util'),
-  ObjectId = require('mongoose').Types.ObjectId;
+	http = require('http'),
+	path = require('path'),
+	mongoose = require('mongoose'),
+	passport = require('passport'),
+	LocalStrategy = require('passport-local').Strategy,
+	util = require('util'),
+	userRoutes = require('./controllers/user'),
+	userApiRoutes = require('./controllers/api/user'),
+	locationApiRoutes = require('./controllers/api/location'),
+	models = require('./models/init');
+	
 
-
-// Load configurations
-var env = process.env.NODE_ENV || 'development',
-    config = require('./config/config')[env];
+//load config
+env = process.env.NODE_ENV || 'development';
+config = require('./config/config')[env];
 
 // Connect to db
 mongoose.connect(config.db, { server: { socketOptions: {keepAlive:1} } });
-
-// define models
-User = mongoose.model('User', UserSchema);
-Location = mongoose.model('Location', LocationSchema);
-
 
 // Define the strategy to be used by PassportJS
 passport.use(new LocalStrategy(
   function(username, password, done) {
     //User.find()
 
-    User.findOne({'username': username}, { 'locations': 0 }, function(err, user){
+    models.User.findOne({'username': username}, { 'locations': 0 }, function(err, user){
       if(err){
         return done(null, false, { message: 'Incorrect credentials.' });
       }
@@ -59,13 +55,14 @@ passport.deserializeUser(function(user, done) {
 
 // Define a middleware function to be used for every secured route
 var auth = function(req, res, next){
-  if (!req.isAuthenticated()) 
-  	res.send(401);
-  else
-  	next();
+	if (!req.isAuthenticated()) 
+	{
+		res.send(401);
+	}
+	else{
+		next();
+	}
 };
-
-
 
 // Start express application
 var app = express();
@@ -75,16 +72,16 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
+//send all api responses as json
 app.use(function(req, res, next) {
-  //send all api responses as json
-  regex = new RegExp('/^/api\//i');
-  if( regex.test(req.url) ){
-    res.contentType('application/json'); 
-  }
-  console.log(regex.test(req.url));
-  
-  next();
+	regex = new RegExp('/^/api\//i');
+	if( regex.test(req.url) ){
+		res.contentType('application/json'); 
+	}
+
+	next();
 });
+
 app.use(express.logger('dev'));
 app.use(express.cookieParser()); 
 app.use(express.methodOverride());
@@ -97,130 +94,30 @@ app.use(app.router);
 
 // development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+	app.use(express.errorHandler());
 }
 
 
 // routes
 app.get('/', function(req, res){
-  res.render('index', { title: 'Favorite Locations' });
+	res.render('index', { title: 'Favorite Locations' });
 });
 
+app.post('/api/v1/locations', auth, locationApiRoutes.create);
+app.delete('/api/v1/locations/:locId', auth, locationApiRoutes.remove);
+app.get('/api/v1/locations/:locId', auth, locationApiRoutes.single);
+
+app.get('/api/v1/users/:userId', auth, userApiRoutes.single);
+
+app.get('/loggedin', userRoutes.loggedin);
+app.post('/login', passport.authenticate('local'), userRoutes.login);
+app.get('/logout', userRoutes.logout);
 
 
 
-app.post('/api/v1/locations', function(req, res){
-  var newLocation = req.body;
-
-  User.findById(req.user._id, function(err, user){
-
-  	console.log('req.body:');
-  	console.log(newLocation);
-  	console.log();
-
-    user.locations.push(newLocation);
-
-    console.log(user);
-
-    user.save(function(err, user){
-      if(err){
-        res.send({message: 'Unable to save new location.'}, 500);
-      }
-      else{
-      	res.send(200);
-      }
-
-      
-    });
-  });
-});
-
-
-app.delete('/api/v1/locations/:locId', auth, function(req, res){
-
-	var locId = req.params.locId;
-	User.findOneAndUpdate(
-    	{_id: req.user._id}, 
-    	{$pull: {locations: {_id: locId}}},
-    	function(err, user) {
-    		if(err){
-    			res.send({message: err.message}, 400);
-    		}
-    		else{
-    			res.send({locId: locId}, 200);
-    		}
-    	});
-});
-
-
-
-app.get('/api/v1/locations/:locId', auth, function(req, res){
-
-    User.find()
-    .where('locations._id', req.params.locId)
-    .select({'locations.$': 1})
-    .exec(function(err, data){
-        if(err){ 
-          res.send(err, 400); 
-        }
-        else{
-          if( data[0] && data[0].locations[0] ) {
-           res.send(data[0].locations[0]);  
-          }
-          else{
-            res.send({});
-          }
-        }
-    });
-});
-
-
-
-app.get('/api/v1/users/:userId', function(req, res){
-  User.findOne({'_id': req.params.userId}, function(err, user){
-    if(err){
-      res.send(err, 400);
-    }
-    else{
-      res.send(user);
-    }
-  });
-});
-
-
-// routes to test if the user is logged in or not
-app.get('/loggedin', function(req, res) {
-  res.send(req.isAuthenticated() ? req.user : '0');
-});
-
-// route to log in
-app.post('/login', passport.authenticate('local'), function(req, res) {
-  res.send(req.user);
-});
-
-// route to log out
-app.get('/logout', function(req, res){
-  req.logOut();
-  //res.send(200);
-
-  res.writeHead(302, {
-  'Location': '/'
-  });
-  res.end();
-});
-
-
-app.get('/users', function(req, res){
-	User.find(function(err, users){
-		res.send(users);
-	});
-});
-
-
-
-
+//run server
 http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+	console.log('Express server listening on port ' + app.get('port'));
 });
 
 

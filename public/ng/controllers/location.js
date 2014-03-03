@@ -1,3 +1,4 @@
+
 favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeParams', 'FavLocation', '$location',
 												function($scope, $rootScope, $routeParams, FavLocation, $location){
 	$scope.load = function(){
@@ -38,7 +39,7 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeP
 		//if (!$scope.validate()) {
 		//	return;
 		//}
-
+		/*
 		console.log('original: ');
 		console.log($scope.favlocation);
 
@@ -47,9 +48,9 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeP
 		
 		console.log('transformed: ');
 		console.log(locationTransformed);
-		
+		*/
 
-		FavLocation.save(locationTransformed, function(data){
+		FavLocation.save($scope.favlocation, function(data){
 			$rootScope.message = 'Location saved.'
 			$location.path('locations');
 		},

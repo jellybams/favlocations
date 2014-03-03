@@ -10,10 +10,14 @@ var LocationSchema,
 */
 
 LocationSchema = new Schema({
-  'lat': Number,
-  'lng': Number,
+  'name': String,
   'address': { type: String, validate: [validatePresenceOf, 'The address is required in order to add a new location.'] },
-  'name': String
+  'city': {type: String, validate: [validatePresenceOf, 'The city is required in order to add a new location.']},
+  'state': {type: String, validate: [validatePresenceOf, 'The state is required in order to add a new location.']},
+  'zip': {type: String, validate: [validatePresenceOf, 'The zip code is required in order to add a new location.']},
+  'country': {type: String, validate: [validatePresenceOf, 'The country is required in order to add a new location.']},
+  'lat': Number,
+  'lng': Number
 });
 
 LocationSchema.virtual('id')
@@ -21,11 +25,18 @@ LocationSchema.virtual('id')
   return this._id.toHexString();
 });
 
+LocationSchema.virtual('addressConcat').get(function() {
+  var addressConcat = this.address + ', ' + this.city + ', ' + this.state + ', ' + this.zip + ', ' + this.country;
+
+  return addressConcat;
+});
+
 //geocode address before saving location
 LocationSchema.pre('save', function(next) {
   //geocode address
   var location = this;
-  geocoder.geocode(this.address, function ( err, data ) {
+
+  geocoder.geocode(this.addressConcat, function ( err, data ) {
     if(data && data.status == 'OK'){
       //console.log(util.inspect(data.results[0].geometry.location.lng, false, null));
 

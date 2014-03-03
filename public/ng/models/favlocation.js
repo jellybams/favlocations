@@ -28,7 +28,7 @@ favlocations.module.factory('FavLocation', function($http){
 
 	FavLocation.prepareParams = function(locationFields){
 		var transformed = {};
-		transformed.address = locationFields.address + ', ' + locationFields.city + ', ' + locationFields.state + ', ' + locationFields.zip + ' ' + locationFields.country;
+		transformed.address = locationFields.address + ', ' + locationFields.city + ', ' + locationFields.state + ', ' + locationFields.zip + ',' + locationFields.country;
 		transformed.name = locationFields.name;
 
 		return transformed;

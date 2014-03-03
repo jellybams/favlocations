@@ -31,6 +31,14 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeP
 				//error - redirect back to location list and show error message
 				//console.log(err);
 			});
+
+			$scope.map = {
+				center: {
+					latitude: 40.82628,
+					longitude: -100.722656
+				},
+				zoom: 8
+			};
 		}
 		
 	};
@@ -39,16 +47,6 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeP
 		//if (!$scope.validate()) {
 		//	return;
 		//}
-		/*
-		console.log('original: ');
-		console.log($scope.favlocation);
-
-
-		var locationTransformed = FavLocation.prepareParams($scope.favlocation);
-		
-		console.log('transformed: ');
-		console.log(locationTransformed);
-		*/
 
 		FavLocation.save($scope.favlocation, function(data){
 			$rootScope.message = 'Location saved.'

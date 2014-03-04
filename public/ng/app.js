@@ -3,7 +3,7 @@ var favlocations = favlocations || {
 									'apiUrl': 'http://localhost:3000/api/v1/' 
 								};
 
-favlocations.module = angular.module('favlocations', ['ngRoute', 'ngResource', 'google-maps'])
+favlocations.module = angular.module('favlocations', ['ngRoute', 'ngResource', 'flInlineScript'])
 	.config(function($routeProvider, $locationProvider, $httpProvider){
 
 		//function to check if the user is logged in before loading route

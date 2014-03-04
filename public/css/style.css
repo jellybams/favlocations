@@ -41,9 +41,18 @@ a {
 	margin-top:20px;
 }
 
+#map-canvas {
+	height:400px;
+	width:100%;
+}
+
 .angular-google-map-container { 
 	height: 400px; 
 	margin-top:30px;
+}
+
+#new-location-btn {
+	margin-top: 22px;
 }
 
 @media (min-width: 768px) {

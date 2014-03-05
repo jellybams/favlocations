@@ -56,6 +56,14 @@ module.exports.update = function(req, res){
     {$set: set}, 
     function(err, numAffected) {
       console.log(err, numAffected);
+
+      if(err || numAffected == 0){
+        res.send( {message: err.message}, 400 );
+      }
+      else{
+        res.send(200);
+      }
+      
     });
 };
 

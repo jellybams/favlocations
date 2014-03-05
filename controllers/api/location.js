@@ -38,6 +38,28 @@ module.exports.create = function(req, res){
 	});
 };
 
+
+module.exports.update = function(req, res){
+  var locId = req.params.locId,
+    userId = req.user._id,
+    input = req.body;
+
+  var set = {};
+
+  for (var field in input) {
+    set['locations.$.' + field] = input[field];
+  }
+
+  //console.log(userId, locId, input);
+  
+  models.User.update({_id: userId, "locations._id": locId}, 
+    {$set: set}, 
+    function(err, numAffected) {
+      console.log(err, numAffected);
+    });
+};
+
+
 module.exports.remove = function(req, res){
 	var locId = req.params.locId;
 	models.User.findOneAndUpdate(

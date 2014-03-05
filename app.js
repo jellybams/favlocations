@@ -100,6 +100,7 @@ if ('development' == app.get('env')) {
 
 // API routes
 app.post('/api/v1/locations', auth, locationApiRoutes.create);
+app.put('/api/v1/locations/:locId', auth, locationApiRoutes.update);
 app.delete('/api/v1/locations/:locId', auth, locationApiRoutes.remove);
 app.get('/api/v1/locations/:locId', auth, locationApiRoutes.single);
 app.get('/api/v1/users/:userId', auth, userApiRoutes.single);

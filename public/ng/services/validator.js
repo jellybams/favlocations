@@ -30,9 +30,7 @@ favlocations.module.factory('Validator', function() {
 
 	validator.func = {
 		reqd : function(form, fieldname) {
-			console.log('running req for ' + fieldname);
 			if (!form[fieldname] || form[fieldname] === 0) {
-				console.log('req failed for ' + fieldname);
 				return "Field cannot be empty";
 			}
 		},

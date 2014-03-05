@@ -4,6 +4,19 @@ favlocations.module.factory('FavLocation', function($http){
 
 	FavLocation.url = favlocations.apiUrl + 'locations/';
 
+	FavLocation.create = function(){
+		var data = {
+			name: '',
+			address: '',
+			city: '',
+			state: '',
+			zip: '',
+			country: ''
+		};
+
+		return data;
+	};
+
 	FavLocation.get = function(id, success, error){
 		var url = this.url + id;
 		console.log(url);
@@ -12,13 +25,13 @@ favlocations.module.factory('FavLocation', function($http){
 
 	FavLocation.save = function(location, success, error){
 
-		//var filtered = favlocations.util.mergeInto(FavLocation.create(), location);
+		var filtered = favlocations.util.mergeInto(this.create(), location);
 
 		if( location._id ){
-			$http.put( this.url + id, location ).sucess(success).error(error);
+			$http.put( this.url + location._id, filtered ).success(success).error(error);
 		}
 		else{
-			$http.post( this.url, location ).success(success).error(error);
+			$http.post( this.url, filtered ).success(success).error(error);
 		}
 	};
 

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html ng-app="favlocations">
+<head>
+<title>Favorite Locations</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link rel='stylesheet' href='/css/style.css' />  
+</head>
+
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Your Favorite Locations <small>Because repetition sucks.</small></a>
+    </div>
+  </div>
+</nav>
+
+<div class="container" ng-show="message">
+  <p class="bg-primary col-sm-12" ng-cloak>{{message}}</p>
+</div>
+
+<ng-view></ng-view>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular-resource.min.js"></script>
+<script type="text/javascript" src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
+<script type="text/javascript" src="/ng/app.js"></script>
+<script type="text/javascript" src="/ng/controllers/location.js"></script>
+<script type="text/javascript" src="/ng/controllers/locationlist.js"></script>
+<script type="text/javascript" src="/ng/controllers/login.js"></script>
+<script type="text/javascript" src="/ng/models/favlocation.js"></script>
+<script type="text/javascript" src="/ng/models/user.js"></script>
+<script type="text/javascript" src="/ng/services/validator.js"></script>
+<!--<script type="text/javascript" src='/js/underscore-min.js'></script>
+<script type="text/javascript" src='/ng/directives/angular-google-maps.min.js'></script>-->
+<script type="text/javascript" src="/ng/directives/lazy-load.js"></script>
+</body>
+</html>

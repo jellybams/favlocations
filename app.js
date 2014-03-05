@@ -98,17 +98,13 @@ if ('development' == app.get('env')) {
 }
 
 
-// routes
-app.get('/', function(req, res){
-	res.render('index', { title: 'Favorite Locations' });
-});
-
+// API routes
 app.post('/api/v1/locations', auth, locationApiRoutes.create);
 app.delete('/api/v1/locations/:locId', auth, locationApiRoutes.remove);
 app.get('/api/v1/locations/:locId', auth, locationApiRoutes.single);
-
 app.get('/api/v1/users/:userId', auth, userApiRoutes.single);
 
+//auth routes
 app.get('/loggedin', userRoutes.loggedin);
 app.post('/login', passport.authenticate('local'), userRoutes.login);
 app.get('/logout', userRoutes.logout);

@@ -1,14 +1,11 @@
 
-favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeParams', 'FavLocation', '$location',
-												function($scope, $rootScope, $routeParams, FavLocation, $location){
+favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeParams', 'FavLocation', '$location', 'Validator', 
+												function($scope, $rootScope, $routeParams, FavLocation, $location, Validator){
 
 	$scope.load = function(){
 
 		$scope.locationId = $routeParams.locationId;
 		$scope.favlocation = {};
-		
-		
-
 
 		if( $routeParams.locationId != 0 ){
 			//get the current location record
@@ -28,59 +25,23 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeP
 				var marker = new google.maps.Marker({
 				    position: myLatlng,
 				    map: map,
-				    title:"Hello World!"
+				    title: data.name || 'Your Location'
 				});
-
-				//google map params
-				/*
-				$scope.map = {
-				    center: {
-				        latitude: data.lat,
-				        longitude: data.lng
-				    },
-				    zoom: 10,
-				    draggable: 'false',
-				    marker: {
-				    	coords: {latitude: data.lat, longitude: data.lng},
-				    	iconuri: 'http://localhost:3000/img/redpin-sm.png'
-				    }
-				    
-				};
-				*/
     		},
 
 			function(err){
-				//error - redirect back to location list and show error message
-				//console.log(err);
+				$rootScope.message = 'There was a problem loading that location.';
+				$location.path('locations');
 			});
-
-			/*
-			$scope.map = {
-				center: {
-					latitude: 40.82628,
-					longitude: -100.722656
-				},
-				zoom: 10,
-			    events: {
-			    	tilesloaded: function(map){
-			    		console.log(map);
-				    	$scope.$apply(function () {
-				    		
-        					//var myLatlng = new google.maps.LatLng(data.lat, data.lng);
-							//var marker = new google.maps.Marker({ map: map, position: myLatlng });
-    					});
-			    		}
-			    	}
-			};
-			*/
 		}
 		
 	};
 
 	$scope.save = function(){
-		//if (!$scope.validate()) {
-		//	return;
-		//}
+
+		if (!$scope.validate()) {
+			return;
+		}
 
 		FavLocation.save($scope.favlocation, function(data){
 			$rootScope.message = 'Location saved.'
@@ -93,6 +54,7 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeP
 		
 	};
 
+
 	$scope.remove = function(){
 		if( window.confirm('Are you sure you want to delete this location?') ){
 			FavLocation.remove($scope.favlocation._id, function(data){
@@ -104,6 +66,40 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeP
 			});
 		}
 	}
+
+
+	$scope.cancel = function(){
+		$rootScope.message = null;
+		$location.path('/locations');
+	}
+
+
+	$scope.validate = function() {
+
+		$scope.invalid = [];
+		$scope.errors = $scope.validator.test($scope.favlocation);
+
+		console.log($scope.errors);
+
+		if ($scope.errors !== true) {
+			$scope.errors.forEach(function(err) {
+				$scope.invalid[err.field] = true;
+			});
+			$rootScope.message = 'Looks like something is wrong... the fields outlined in red are required.';
+
+			console.log($scope.invalid);
+
+			return false;
+		}
+
+		return true;
+	};
+
+
+	$scope.validator = Validator.create({
+		reqd : ['name', 'address', 'city', 'state', 'country']
+	});
+
 
 	$scope.load();
 }]);

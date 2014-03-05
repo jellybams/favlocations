@@ -28,19 +28,13 @@ favlocations.module.controller('LocationListCtrl',
 
 		if( window.confirm('Are you sure you want to delete this location?') ){
 			FavLocation.remove(locId, function(data){
-				
-
-				console.log(data);
-				console.log($scope.locations);
-
-
 				var index = favlocations.util.findInList($scope.locations, data.locId, true, '_id');
 				$scope.locations.splice(index, 1);
 				$rootScope.message = 'Location has been deleted.';
 			},
 			function(err){
 				//error
-				console.log(err);
+				//console.log(err);
 			});
 		}
 	};

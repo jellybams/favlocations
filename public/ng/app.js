@@ -95,7 +95,6 @@ favlocations.util.findInList = function(list, val, idx, key) {
 
 	key = key ? key : 'id';
 	for (var i = 0; i < list.length; i++) {
-		console.log(list[i][key]);
 		if (list[i][key] == val) {
 			return idx ? i : list[i];	
 		}

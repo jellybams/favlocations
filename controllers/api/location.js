@@ -25,14 +25,7 @@ module.exports.create = function(req, res){
 	var newLocation = req.body;
 
 	models.User.findById(req.user._id, function(err, user){
-
-		//console.log('req.body:');
-		//console.log(newLocation);
-		//console.log();
-
 		user.locations.push(newLocation);
-
-		//console.log(user);
 
 		user.save(function(err, user){
 			if(err){

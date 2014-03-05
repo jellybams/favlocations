@@ -10,7 +10,7 @@ var UserSchema,
 */
 
 UserSchema = new Schema({
-  'username': { type: String, validate: [validatePresenceOf, 'a username is required'], index: { unique: true } },
+  'username': { type: String, required: 'a username is required', index: { unique: true } },
   'hashed_password': String,
   'salt': String,
   'locations': [LocationSchema]
@@ -51,10 +51,3 @@ UserSchema.pre('save', function(next) {
 
 module.exports = UserSchema;
 
-
-/*
-* Helper functions
-*/
-function validatePresenceOf(value) {
-  return value && value.length;
-}

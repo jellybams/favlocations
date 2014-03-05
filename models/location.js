@@ -54,10 +54,3 @@ LocationSchema.set('toObject', { virtuals: true })
 
 module.exports = LocationSchema;
 
-
-/*
-* Helper functions
-*/
-function validatePresenceOf(value) {
-  return value && value.length;
-}

@@ -10,12 +10,12 @@ var LocationSchema,
 */
 
 LocationSchema = new Schema({
-  'name': String,
-  'address': { type: String, validate: [validatePresenceOf, 'The address is required in order to add a new location.'] },
-  'city': {type: String, validate: [validatePresenceOf, 'The city is required in order to add a new location.']},
-  'state': {type: String, validate: [validatePresenceOf, 'The state is required in order to add a new location.']},
-  'zip': {type: String, validate: [validatePresenceOf, 'The zip code is required in order to add a new location.']},
-  'country': {type: String, validate: [validatePresenceOf, 'The country is required in order to add a new location.']},
+  'name': { type: String, required: 'The name is required in order to add a new location.' },
+  'address': { type: String, required: 'The address is required in order to add a new location.' },
+  'city': {type: String, required: 'The city is required in order to add a new location.'},
+  'state': {type: String, required: 'The state is required in order to add a new location.'},
+  'zip': String,
+  'country': {type: String, required: 'The country is required in order to add a new location.'},
   'lat': Number,
   'lng': Number
 });

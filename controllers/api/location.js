@@ -36,7 +36,7 @@ module.exports.create = function(req, res){
 
 		user.save(function(err, user){
 			if(err){
-				res.send({message: 'Unable to save new location.'}, 500);
+				res.send({message: 'Unable to save new location.'}, 400);
 			}
 			else{
 				res.send(200);

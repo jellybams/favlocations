@@ -49,7 +49,7 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeP
 		},
 		function(err){
 			//error
-			$rootScope.message = 'There was an error saving this location.';
+			$rootScope.message = 'There was an error saving this location. Check your field values.';
 		});
 		
 	};

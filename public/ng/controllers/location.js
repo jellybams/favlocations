@@ -1,10 +1,6 @@
 
 favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeParams', 'FavLocation', '$location',
 												function($scope, $rootScope, $routeParams, FavLocation, $location){
-	
-	$scope.$on("$destroy", function(){
-		delete(map);
-	});
 
 	$scope.load = function(){
 

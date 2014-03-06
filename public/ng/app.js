@@ -1,9 +1,9 @@
 var favlocations = favlocations || { 
-									'baseUrl': 'http://localhost:3000/', 
-									'apiUrl': 'http://localhost:3000/api/v1/' 
+									'baseUrl': 'http://uber.uptize.com/', 
+									'apiUrl': 'http://uber.uptize.com/api/v1/' 
 								};
 
-favlocations.module = angular.module('favlocations', ['ngRoute', 'ngResource', 'flInlineScript'])
+favlocations.module = angular.module('favlocations', ['ngRoute', 'ngResource'])
 	.config(function($routeProvider, $locationProvider, $httpProvider){
 
 		//function to check if the user is logged in before loading route

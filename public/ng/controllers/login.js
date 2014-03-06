@@ -1,4 +1,4 @@
-favlocations.module.controller('LoginCtrl', function($scope, $rootScope, $http, $location){
+favlocations.module.controller('LoginCtrl', ['$scope', '$rootScope', '$http', '$location', function($scope, $rootScope, $http, $location){
 	$scope.user = {};
 
 	$scope.login = function(){
@@ -16,4 +16,4 @@ favlocations.module.controller('LoginCtrl', function($scope, $rootScope, $http, 
 			$location.url('/login');
 		});
 	};
-});
+}]);

@@ -1,5 +1,5 @@
 
-favlocations.module.factory('User', function($http){
+favlocations.module.factory('User', ['$http', function($http){
 	var User = {};
 
 	User.baseUrl = favlocations.apiUrl + 'users'; 
@@ -17,4 +17,4 @@ favlocations.module.factory('User', function($http){
 	};
 
 	return User;
-});
+}]);

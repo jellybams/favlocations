@@ -13,5 +13,12 @@
     "mongoose": "*",
     "geocoder": "*",
     "util": "*"
+  },
+  "devDependencies": {
+    "gulp": "~3.5.5",
+    "gulp-concat": "~2.1.7",
+    "gulp-uglify": "~0.2.1",
+    "gulp-rename": "~1.2.0",
+    "gulp-ngmin": "~0.1.2"
   }
 }

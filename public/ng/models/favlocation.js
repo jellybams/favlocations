@@ -1,5 +1,5 @@
 
-favlocations.module.factory('FavLocation', function($http){
+favlocations.module.factory('FavLocation', ['$http', function($http){
 	var FavLocation = {};
 
 	FavLocation.url = favlocations.apiUrl + 'locations/';
@@ -48,4 +48,4 @@ favlocations.module.factory('FavLocation', function($http){
 	}
 
 	return FavLocation;
-});
+}]);

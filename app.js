@@ -85,7 +85,7 @@ app.use(function(req, res, next) {
 app.use(express.logger('dev'));
 app.use(express.cookieParser()); 
 app.use(express.methodOverride());
-app.use(express.session({ secret: 'Xmem23lvlsdfu4D' }));
+app.use(express.cookieSession({ secret: config.secret, cookie: { maxAge: 60 * 60 * 1000 } }));
 app.use(express.json()); 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());

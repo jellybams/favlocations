@@ -21,8 +21,6 @@ mongoose.connect(config.db, { server: { socketOptions: {keepAlive:1} } });
 // Define the strategy to be used by PassportJS
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    //User.find()
-
     models.User.findOne({'username': username}, { 'locations': 0 }, function(err, user){
       if(err){
         return done(null, false, { message: 'Incorrect credentials.' });
@@ -40,18 +38,15 @@ passport.use(new LocalStrategy(
 
 // Serialized and deserialized methods when got from session
 passport.serializeUser(function(user, done) {
-    //done(null, user.id);
-    done(null, user);
+	done(null, user._id);
 });
 
-passport.deserializeUser(function(user, done) {
-    /*
-    User.findById(id, function(err, user) {
-        done(err, user);
-      });
-    */
-    done(null, user);
+passport.deserializeUser(function(id, done) {
+	models.User.findById(id, { 'locations': 0 }, function(err, user) {
+		done(err, user);
+	});
 });
+
 
 // Define a middleware function to be used for every secured route
 var auth = function(req, res, next){
@@ -69,8 +64,8 @@ var app = express();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
+//app.set('views', __dirname + '/views');
+//app.set('view engine', 'ejs');
 
 //send all api responses as json
 app.use(function(req, res, next) {

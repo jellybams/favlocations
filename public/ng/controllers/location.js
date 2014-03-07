@@ -6,7 +6,7 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeP
 
 		$scope.locationId = $routeParams.locationId;
 		$rootScope.showLogout = true;
-		$scope.favlocation = {};
+		$scope.favlocation = {country: 'US'};
 
 		if( $routeParams.locationId != 0 ){
 			//get the current location record

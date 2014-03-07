@@ -3,6 +3,8 @@ favlocations.module.controller('LocationListCtrl',
 							function($scope, $rootScope, $location, $timeout, User, FavLocation) {
 
 	$scope.load = function(){
+		$rootScope.showLogout = true;
+		
 		if( $rootScope.message ){
 			$timeout(function(){
 				$rootScope.message = null;

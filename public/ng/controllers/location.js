@@ -5,6 +5,7 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeP
 	$scope.load = function(){
 
 		$scope.locationId = $routeParams.locationId;
+		$rootScope.showLogout = true;
 		$scope.favlocation = {};
 
 		if( $routeParams.locationId != 0 ){
@@ -12,7 +13,6 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeP
 			FavLocation.get($routeParams.locationId, function(data){
 				//success
 				$scope.favlocation = data;
-
 
 				var mapOptions = {
 					zoom: 11,

@@ -4,10 +4,10 @@ var favlocations = favlocations || {
 								};
 
 favlocations.module = angular.module('favlocations', ['ngRoute', 'ngResource'])
-	.config(function($routeProvider, $locationProvider, $httpProvider){
+	.config(['$routeProvider', '$locationProvider', '$httpProvider', function($routeProvider, $locationProvider, $httpProvider){
+		
 
-		//function to check if the user is logged in before loading route
-		var checkLoggedin = function($q, $timeout, $http, $location, $rootScope){
+		function checkLoggedin($q, $timeout, $http, $location, $rootScope){
 			var deferred = $q.defer();
 
 			$http.get('/loggedin').success(function(user){
@@ -26,9 +26,10 @@ favlocations.module = angular.module('favlocations', ['ngRoute', 'ngResource'])
 
 			return deferred.promise;
 		};
-		
+
+
 		//check for 401 response on all http requests
-		$httpProvider.responseInterceptors.push(function($q, $location){
+		$httpProvider.responseInterceptors.push(['$q', '$location', function($q, $location){
 			return function(promise){
 				return promise.then(
 					//success, return the response
@@ -44,19 +45,31 @@ favlocations.module = angular.module('favlocations', ['ngRoute', 'ngResource'])
 					}
 				);
 			};
-		});
+		}]);
+		
 		
 
 		$routeProvider
 			.when('/login', {controller: 'LoginCtrl', templateUrl: 'ng/views/login.html'})
-			.when('/locations', {controller: 'LocationListCtrl', templateUrl: 'ng/views/locations.html', resolve: {loggedin: checkLoggedin}})
-			.when('/locations/:locationId', {controller: 'LocationCtrl', templateUrl: 'ng/views/editlocation.html', resolve: {loggedin: checkLoggedin}})
+			.when('/locations', {controller: 'LocationListCtrl', 
+				templateUrl: 'ng/views/locations.html', 
+				resolve: {loggedin: checkLoggedin}
+			})
+			.when('/locations/:locationId', {controller: 'LocationCtrl', 
+				templateUrl: 'ng/views/editlocation.html', 
+				resolve: {loggedin: checkLoggedin}})
 			.otherwise({redirectTo: '/locations'});
-	});
+
+	}]);
 
 
 
+favlocations.module.run(['$q', '$timeout', '$http', '$location', '$rootScope', 
+	function($q, $timeout, $http, $location, $rootScope) {
 
+	
+
+}]);
 
 
 

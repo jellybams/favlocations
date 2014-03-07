@@ -5,22 +5,16 @@ var gulp = require('gulp'),
 	ngmin = require('gulp-ngmin');	
 
 
-// Concatenate & Minify JS
+// Concatenate & (ng)Minify JS
+// there is a problem running uglify() because there two functions in 
+// favlocations.module.config that are not correctly DI 
 gulp.task('scripts', function() {
 
     return gulp.src(['public/js/underscore-min.js', 'public/ng/**/*.js'])
     	.pipe(concat('all.js'))
         .pipe(ngmin())
+        //.pipe(uglify())
         .pipe(gulp.dest('public/js/'));
-
-/*
-    return gulp.src(['public/ng/app.js','public/ng/controllers/*.js', 'public/ng/models/*.js', 'public/ng/services/*.js', 'public/ng/directives/*.js'])
-        .pipe(concat('all.js'))
-        .pipe(gulp.dest('public/js/'))
-        .pipe(rename('all.min.js'))
-        .pipe(uglify())
-        .pipe(gulp.dest('public/js/'));
-*/
 });
 
 gulp.task('default', ['scripts']);

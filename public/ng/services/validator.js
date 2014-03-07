@@ -1,6 +1,6 @@
 
 /**
- * Manage Module Validator Service
+ * Validator Service
  */
 favlocations.module.factory('Validator', function() {
 

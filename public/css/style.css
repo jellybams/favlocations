@@ -1,5 +1,5 @@
 body {
-  padding-top: 60px;
+  padding-top: 90px;
 }
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -37,11 +37,8 @@ a {
 	padding-bottom: 10px;
 }
 
-.map {
-	margin-top:20px;
-}
-
 #map-canvas {
+	margin-top:50px;
 	height:400px;
 	width:100%;
 }
@@ -56,5 +53,7 @@ a {
 }
 
 @media (min-width: 768px) {
-
+	body {
+		padding-top: 60px;
+	}
 }

@@ -14,19 +14,29 @@ favlocations.module.controller('LocationCtrl', ['$scope', '$rootScope', '$routeP
 				//success
 				$scope.favlocation = data;
 
-				var mapOptions = {
-					zoom: 11,
-					center: new google.maps.LatLng(data.lat, data.lng)
-				};
+				//console.log(data.lat, data.lng, typeof data.lat, typeof data.lng);
 
-				var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+				if( typeof data.lat !== 'undefined' && typeof data.lng !== 'undefined' ){
+					var mapOptions = {
+						zoom: 11,
+						center: new google.maps.LatLng(data.lat, data.lng)
+					};
 
-				var myLatlng = new google.maps.LatLng(data.lat, data.lng);
-				var marker = new google.maps.Marker({
-				    position: myLatlng,
-				    map: map,
-				    title: data.name || 'Your Location'
-				});
+					var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+					var myLatlng = new google.maps.LatLng(data.lat, data.lng);
+					var marker = new google.maps.Marker({
+					    position: myLatlng,
+					    map: map,
+					    title: data.name || 'Your Location'
+					});
+				}
+				else{
+					//if geolocation was not successful, hide map container
+					el = document.getElementById('map-canvas');
+					el.style.display = 'none';
+				}
+				
     		},
 
 			function(err){

@@ -1,4 +1,4 @@
-#Sample CRUD web app build on Node.js/MongoDB/AngularJS
+#Sample CRUD web app built on Node.js/MongoDB/AngularJS
 
 ##To run
 
